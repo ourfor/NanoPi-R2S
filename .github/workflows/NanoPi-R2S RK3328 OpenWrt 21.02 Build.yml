@@ -29,9 +29,6 @@ jobs:
           sudo apt-get -y purge dotnet* ghc* google* llvm* mysql* php* zulu* firefox hhvm
           sudo apt-get -y autoremove --purge          
           wget -O - https://raw.githubusercontent.com/friendlyarm/build-env-on-ubuntu-bionic/master/install.sh | bash
-
-      #- name: Setup Debug Session
-      #  uses: P3TERX/debugger-action@master
   
       - name: Install Repo
         run: |
@@ -46,17 +43,6 @@ jobs:
           repo init -u https://github.com/friendlyarm/friendlywrt_manifests -b master-v21.02 -m rk3328.xml --repo-url=https://github.com/friendlyarm/repo --no-clone-bundle
           cp ../rk3328.xml ../code/.repo/manifests/rk3328.xml
           repo sync -c --no-clone-bundle -j8
-
-      - name: Merge LEDE
-        run: |
-          cd code
-          git clone https://github.com/coolsnowwolf/lede
-          cd friendlywrt
-          cp -r ../lede/package/lean package/
-          cp -r ../lede/package/libs/pcre package/libs/
-          sed -i 's/^src-git luci.*/src-git luci https:\/\/github.com\/coolsnowwolf\/luci/' feeds.conf.default
-          sed -i 's/^src-git packages.*/src-git packages https:\/\/github.com\/coolsnowwolf\/packages;openwrt-19.07/' feeds.conf.default
-          echo 'src-git node https://github.com/nxhack/openwrt-node-packages.git' >> feeds.conf.default
 
       - name: Install Extra Packages
         run: |
@@ -133,9 +119,6 @@ jobs:
           sed -i '/done/imkfs.ext4 /dev/mmcblk0p2 && mkdir /mnt/mmcblk0p2 && mount /dev/mmcblk0p2 /mnt/mmcblk0p2 && mkdir /mnt/mmcblk0p2/docker\n' package/base-files/files/root/setup.sh
           sed -i "/done/iblock detect | sed \"s/enabled\\\t'0'/enabled\\\t'1'/\" > /etc/config/fstab\n" package/base-files/files/root/setup.sh
           sed -i '/done/i[ -f /etc/init.d/dockerman ] && /etc/init.d/dockerman restart\n' package/base-files/files/root/setup.sh
-
-          sed -i 's/\/opt\/docker/\/mnt\/mmcblk0p2\/docker/g' package/luci-app-dockerman/root/etc/config/dockerman
-          sed -i 's/\/root/\/mnt\/mmcblk0p2/g' package/luci-app-r2sflasher/root/usr/bin/rom_flash
 
       - name: Patch Kernel
         run: |
