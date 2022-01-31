@@ -111,12 +111,7 @@ jobs:
         run: |
           rm -f code/friendlywrt/.config*
           cp r2s-rk3328-config code/configs/config_rk3328
-
-      - name: Set Default Values
-        run: |
-          cd code/friendlywrt
-          sed -i '/uci commit luci/i\uci set luci.main.mediaurlbase=/luci-static/argon' package/lean/default-settings/files/zzz-default-settings
-           
+ 
       - name: Install UPX
         run: |
           ln -s /usr/bin/upx-ucl code/friendlywrt/staging_dir/host/bin/upx
